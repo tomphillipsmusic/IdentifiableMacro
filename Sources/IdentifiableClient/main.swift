@@ -1,8 +1,25 @@
 import Identifiable
+import Foundation
+import SwiftUI
 
-let a = 17
-let b = 25
+@Identifiable 
+struct Person {
+    let name: String
+}
 
-let (result, code) = #stringify(a + b)
+struct PeopleView: View {
+    let people = [
+        Person(name: "Tom"),
+        Person(name: "Ty"),
+        Person(name: "Zoe"),
+    ]
+    var body: some View {
+        ForEach(people) {
+            Text($0.name)
+        }
+    }
+}
 
-print("The value \(result) was produced by the code \"\(code)\"")
+#Preview {
+    PeopleView()
+}

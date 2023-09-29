@@ -7,36 +7,34 @@ import XCTest
 import IdentifiableMacros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "identifiable": IdentifiableMacro.self
 ]
 #endif
 
 final class IdentifiableTests: XCTestCase {
-    func testMacro() throws {
+    
+    func testIdentifiableMacro() throws {
         #if canImport(IdentifiableMacros)
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            @identifiable
+            struct Person {
+                let name: String
+            }
             """,
             expandedSource: """
-            (a + b, "a + b")
+            struct Person {
+                let name: String
+            
+                let uuid = UUID()
+            }
+            
+            extension Person: Identifiable {
+                var id: UUID {
+                    self.uuid
+                }
+            }
             """,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
-    }
-
-    func testMacroWithStringLiteral() throws {
-        #if canImport(IdentifiableMacros)
-        assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
             macros: testMacros
         )
         #else
@@ -44,3 +42,4 @@ final class IdentifiableTests: XCTestCase {
         #endif
     }
 }
+
